@@ -1,0 +1,9 @@
+workload,variant,structure,n,time_ms,steps,moves,comparisons
+W1,-,DynamicArray,100,0.408,10000,0,0
+W1,-,MyLinkedList,100,1.004,501508,0,0
+W1,-,DynamicArray,1000,0.095,10000,0,0
+W1,-,MyLinkedList,1000,10.047,5005208,0,0
+W1,-,DynamicArray,10000,0.068,10000,0,0
+W1,-,MyLinkedList,10000,130.991,50129208,0,0
+W1,-,DynamicArray,100000,0.015,10000,0,0
+W1,-,MyLinkedList,100000,1837.992,502489208,0,0
