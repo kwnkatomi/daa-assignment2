@@ -1,10 +1,17 @@
 package structures;
+import metrics.Metrics;
 
 public class DynamicArray {
     private int[] data;
     private int size;
+    private final Metrics metrics;
 
     public DynamicArray() {
+        this(new Metrics());
+    }
+
+    public DynamicArray(Metrics metrics) {
+        this.metrics = metrics;
         data = new int[2];
         size = 0;
     }
@@ -15,6 +22,7 @@ public class DynamicArray {
         }
 
         data[size] = value;
+        metrics.moves++;
         size++;
     }
 
@@ -22,6 +30,8 @@ public class DynamicArray {
         int[] bigger = new int[data.length * 2];
 
         for (int i = 0; i < data.length; i++) {
+            metrics.steps++;
+            metrics.moves++;
             bigger[i] = data[i];
         }
 
@@ -32,7 +42,7 @@ public class DynamicArray {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index);
         }
-
+        metrics.steps++;
         return data[index];
     }
 
@@ -50,10 +60,13 @@ public class DynamicArray {
         }
 
         for (int i = size; i > index; i--) {
+            metrics.steps++;
+            metrics.moves++;
             data[i] = data[i - 1];
         }
 
         data[index] = value;
+        metrics.moves++;
         size++;
     }
 
@@ -61,10 +74,12 @@ public class DynamicArray {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index);
         }
-
+        metrics.steps++;
         int removedValue = data[index];
 
         for (int i = index; i < size - 1; i++) {
+            metrics.steps++;
+            metrics.moves++;
             data[i] = data[i + 1];
         }
 
@@ -74,6 +89,9 @@ public class DynamicArray {
 
     public boolean contains(int value) {
         for (int i = 0; i < size; i++) {
+            metrics.steps++;
+            metrics.comparisons++;
+
             if (data[i] == value) {
                 return true;
             }
