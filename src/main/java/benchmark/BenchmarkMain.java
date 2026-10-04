@@ -14,6 +14,7 @@ import java.util.Arrays;
 public class BenchmarkMain {
     private static final int[] SIZES = {100, 1_000, 10_000, 100_000};
     private static final int ACCESS_CALLS = 10_000;
+    private static final int INSERT_REMOVE_OPERATIONS = 1_000;
 
     private static int[] generateData(int n) {
         int[] values = new int[n];
@@ -163,6 +164,53 @@ public class BenchmarkMain {
         return lastTrial;
     }
 
+    private static int[] generateInsertValues() {
+        int[] values = new int[INSERT_REMOVE_OPERATIONS];
+        Random random = new Random(42);
+
+        for (int i = 0; i < values.length; i++) {
+            values[i] = random.nextInt(1_000_000);
+        }
+
+        return values;
+    }
+
+    private static Trial benchmarkArrayInsertRemove(
+            int[] values, int[] insertValues, int index
+    ) {
+        runArrayInsertRemoveOnce(values, insertValues, index); // warm-up
+
+        long[] times = new long[5];
+        Trial lastTrial = null;
+
+        for (int i = 0; i < times.length; i++) {
+            lastTrial = runArrayInsertRemoveOnce(values, insertValues, index);
+            times[i] = lastTrial.timeNanos;
+        }
+
+        Arrays.sort(times);
+        lastTrial.timeNanos = times[2];
+        return lastTrial;
+    }
+
+    private static Trial benchmarkListInsertRemove(
+            int[] values, int[] insertValues, int index
+    ) {
+        runListInsertRemoveOnce(values, insertValues, index); // warm-up
+
+        long[] times = new long[5];
+        Trial lastTrial = null;
+
+        for (int i = 0; i < times.length; i++) {
+            lastTrial = runListInsertRemoveOnce(values, insertValues, index);
+            times[i] = lastTrial.timeNanos;
+        }
+
+        Arrays.sort(times);
+        lastTrial.timeNanos = times[2];
+        return lastTrial;
+    }
+
     public static void main(String[] args) throws IOException {
         Path output = Path.of("results", "results.csv");
         Files.createDirectories(output.getParent());
@@ -190,10 +238,31 @@ public class BenchmarkMain {
 
                 Trial listSearchTrial = benchmarkListSearch(values, queries);
                 writeRow(writer, "W2", "-", "MyLinkedList", n, listSearchTrial);
+
+
+                int[] insertValues = generateInsertValues();
+
+                Trial arrayHeadTrial =
+                        benchmarkArrayInsertRemove(values, insertValues, 0);
+                writeRow(writer, "W3", "head", "DynamicArray", n, arrayHeadTrial);
+
+                Trial listHeadTrial =
+                        benchmarkListInsertRemove(values, insertValues, 0);
+                writeRow(writer, "W3", "head", "MyLinkedList", n, listHeadTrial);
+
+                int middleIndex = n / 2;
+
+                Trial arrayMiddleTrial =
+                        benchmarkArrayInsertRemove(values, insertValues, middleIndex);
+                writeRow(writer, "W3", "middle", "DynamicArray", n, arrayMiddleTrial);
+
+                Trial listMiddleTrial =
+                        benchmarkListInsertRemove(values, insertValues, middleIndex);
+                writeRow(writer, "W3", "middle", "MyLinkedList", n, listMiddleTrial);
             }
         }
 
-        System.out.println("W1, W2 results saved to results/results.csv");
+        System.out.println("W1, W2, W3 results saved to results/results.csv");
     }
 
     private static void writeRow(
@@ -287,6 +356,60 @@ public class BenchmarkMain {
 
         long elapsed = System.nanoTime() - start;
         blackhole = found;
+        return new Trial(elapsed, metrics);
+    }
+
+    private static Trial runArrayInsertRemoveOnce(
+            int[] values, int[] insertValues, int index
+    ) {
+        Metrics metrics = new Metrics();
+        DynamicArray array = new DynamicArray(metrics);
+
+        for (int value : values) {
+            array.add(value);
+        }
+
+        metrics.reset();
+        long removedSum = 0;
+        long start = System.nanoTime();
+
+        for (int value : insertValues) {
+            array.add(index, value);
+        }
+
+        for (int i = 0; i < INSERT_REMOVE_OPERATIONS; i++) {
+            removedSum += array.remove(index);
+        }
+
+        long elapsed = System.nanoTime() - start;
+        blackhole = removedSum;
+        return new Trial(elapsed, metrics);
+    }
+
+    private static Trial runListInsertRemoveOnce(
+            int[] values, int[] insertValues, int index
+    ) {
+        Metrics metrics = new Metrics();
+        MyLinkedList list = new MyLinkedList(metrics);
+
+        for (int value : values) {
+            list.add(value);
+        }
+
+        metrics.reset();
+        long removedSum = 0;
+        long start = System.nanoTime();
+
+        for (int value : insertValues) {
+            list.add(index, value);
+        }
+
+        for (int i = 0; i < INSERT_REMOVE_OPERATIONS; i++) {
+            removedSum += list.remove(index);
+        }
+
+        long elapsed = System.nanoTime() - start;
+        blackhole = removedSum;
         return new Trial(elapsed, metrics);
     }
 }

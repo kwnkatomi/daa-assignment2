@@ -70,6 +70,7 @@ public class MyLinkedList {
         if (index == 0) {
             metrics.moves++;
             newNode.next = head;
+
             metrics.moves++;
             head = newNode;
 
@@ -85,7 +86,9 @@ public class MyLinkedList {
                 previous = previous.next;
             }
 
+            metrics.moves++;
             newNode.next = previous.next;
+
             metrics.moves++;
             previous.next = newNode;
 
@@ -102,7 +105,6 @@ public class MyLinkedList {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index);
         }
-        metrics.steps++;
 
         Node removed;
 
@@ -119,8 +121,8 @@ public class MyLinkedList {
             Node previous = head;
 
             for (int i = 0; i < index - 1; i++) {
-                previous = previous.next;
                 metrics.steps++;
+                previous = previous.next;
             }
 
             removed = previous.next;
