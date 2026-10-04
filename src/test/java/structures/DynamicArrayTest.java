@@ -1,6 +1,6 @@
 package structures;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -36,5 +36,20 @@ public class DynamicArrayTest {
         DynamicArray array = new DynamicArray();
 
         assertThrows(IndexOutOfBoundsException.class, () -> array.add(1, 99));
+    }
+
+    @Test
+    public void removeAtIndexRemovesValueAndShiftsElements() {
+        DynamicArray array = new DynamicArray();
+        array.add(10);
+        array.add(20);
+        array.add(30);
+
+        int removedValue = array.remove(1);
+
+        assertEquals(20, removedValue);
+        assertEquals(2, array.size());
+        assertEquals(10, array.get(0));
+        assertEquals(30, array.get(1));
     }
 }
