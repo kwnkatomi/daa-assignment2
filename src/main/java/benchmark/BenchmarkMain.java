@@ -1,5 +1,6 @@
 package benchmark;
 
+import structures.MinHeap;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -211,6 +212,22 @@ public class BenchmarkMain {
         return lastTrial;
     }
 
+    private static Trial benchmarkHeap(int[] values) {
+        runHeapOnce(values); // warm-up
+
+        long[] times = new long[5];
+        Trial lastTrial = null;
+
+        for (int i = 0; i < times.length; i++) {
+            lastTrial = runHeapOnce(values);
+            times[i] = lastTrial.timeNanos;
+        }
+
+        Arrays.sort(times);
+        lastTrial.timeNanos = times[2];
+        return lastTrial;
+    }
+
     public static void main(String[] args) throws IOException {
         Path output = Path.of("results", "results.csv");
         Files.createDirectories(output.getParent());
@@ -259,10 +276,14 @@ public class BenchmarkMain {
                 Trial listMiddleTrial =
                         benchmarkListInsertRemove(values, insertValues, middleIndex);
                 writeRow(writer, "W3", "middle", "MyLinkedList", n, listMiddleTrial);
+
+
+                Trial heapTrial = benchmarkHeap(values);
+                writeRow(writer, "W4", "-", "MinHeap", n, heapTrial);
             }
         }
 
-        System.out.println("W1, W2, W3 results saved to results/results.csv");
+        System.out.println("W1-W4 results saved to results/results.csv");
     }
 
     private static void writeRow(
@@ -410,6 +431,38 @@ public class BenchmarkMain {
 
         long elapsed = System.nanoTime() - start;
         blackhole = removedSum;
+        return new Trial(elapsed, metrics);
+    }
+
+    private static Trial runHeapOnce(int[] values) {
+        Metrics metrics = new Metrics();
+        MinHeap heap = new MinHeap(metrics);
+
+        metrics.reset();
+        long checksum = 0;
+        boolean first = true;
+        int previous = 0;
+
+        long start = System.nanoTime();
+
+        for (int value : values) {
+            heap.insert(value);
+        }
+
+        for (int i = 0; i < values.length; i++) {
+            int extracted = heap.extractMin();
+
+            if (!first && extracted < previous) {
+                throw new IllegalStateException("Heap output is not sorted");
+            }
+
+            previous = extracted;
+            first = false;
+            checksum += extracted;
+        }
+
+        long elapsed = System.nanoTime() - start;
+        blackhole = checksum;
         return new Trial(elapsed, metrics);
     }
 }

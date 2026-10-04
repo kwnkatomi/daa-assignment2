@@ -22,13 +22,14 @@ public class MinHeap {
 
         int index = size;
         data[index] = value;
-        metrics.moves++;
         size++;
 
         while (index > 0) {
             int parent = (index - 1) / 2;
 
+            metrics.steps += 2;
             metrics.comparisons++;
+
             if (data[parent] <= data[index]) {
                 break;
             }
@@ -53,10 +54,13 @@ public class MinHeap {
     }
 
     private void swap(int first, int second) {
+        metrics.steps += 2;
+
         int temporary = data[first];
         data[first] = data[second];
         data[second] = temporary;
-        metrics.moves += 3;
+
+        metrics.moves += 2;
     }
 
     public int peekMin() {
@@ -73,19 +77,22 @@ public class MinHeap {
             throw new IllegalStateException("Heap is empty");
         }
 
-        int minimum = data[0];
-        data[0] = data[size - 1];
         metrics.steps++;
-        metrics.moves++;
-        size--;
+        int minimum = data[0];
 
+        if (size > 1) {
+            metrics.steps++;          // Read the last array cell
+            metrics.moves++;          // Move that element to the root
+            data[0] = data[size - 1];
+        }
+
+        size--;
         int index = 0;
 
         while (true) {
             int left = 2 * index + 1;
             int right = 2 * index + 2;
 
-            metrics.steps++;
             if (left >= size) {
                 break;
             }
@@ -93,13 +100,17 @@ public class MinHeap {
             int smallerChild = left;
 
             if (right < size) {
+                metrics.steps += 2;
                 metrics.comparisons++;
-            }
-            if (right < size && data[right] < data[left]) {
-                smallerChild = right;
+
+                if (data[right] < data[left]) {
+                    smallerChild = right;
+                }
             }
 
+            metrics.steps += 2;
             metrics.comparisons++;
+
             if (data[index] <= data[smallerChild]) {
                 break;
             }
