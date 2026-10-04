@@ -141,10 +141,14 @@ public class MyLinkedList {
         Node current = head;
 
         while (current != null) {
-            metrics.steps++;
             metrics.comparisons++;
+
             if (current.value == value) {
                 return true;
+            }
+
+            if (current.next != null) {
+                metrics.steps++;
             }
 
             current = current.next;
