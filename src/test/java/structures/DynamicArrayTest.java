@@ -52,4 +52,24 @@ public class DynamicArrayTest {
         assertEquals(10, array.get(0));
         assertEquals(30, array.get(1));
     }
+
+    @Test
+    public void containsReturnsTrueForExistingValue() {
+        DynamicArray array = new DynamicArray();
+        array.add(10);
+        array.add(20);
+        array.add(30);
+
+        assertEquals(true, array.contains(20));
+    }
+
+    @Test
+    public void containsReturnsFalseForNonExistingValue() {
+        DynamicArray array = new DynamicArray();
+        array.add(10);
+        array.add(20);
+        array.add(30);
+
+        assertEquals(false, array.contains(40));
+    }
 }
