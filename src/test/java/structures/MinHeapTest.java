@@ -1,5 +1,5 @@
 package structures;
-
+import metrics.Metrics;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,5 +69,26 @@ class MinHeapTest {
         MinHeap heap = new MinHeap();
 
         assertThrows(IllegalStateException.class, () -> heap.extractMin());
+    }
+
+    @Test
+    void countsArrayReadsAndShifts() {
+        Metrics metrics = new Metrics();
+        DynamicArray array = new DynamicArray(metrics);
+
+        array.add(10);
+        array.add(20);
+        array.add(1, 15);
+
+        metrics.reset();
+
+        assertEquals(15, array.get(1));
+        assertEquals(1, metrics.steps);
+
+        metrics.reset();
+
+        assertEquals(15, array.remove(1));
+        assertEquals(2, metrics.steps);
+        assertEquals(1, metrics.moves);
     }
 }

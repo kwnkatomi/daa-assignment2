@@ -22,6 +22,7 @@ public class DynamicArray {
         }
 
         data[size] = value;
+        metrics.moves++;
         size++;
     }
 
@@ -65,6 +66,7 @@ public class DynamicArray {
         }
 
         data[index] = value;
+        metrics.moves++;
         size++;
     }
 

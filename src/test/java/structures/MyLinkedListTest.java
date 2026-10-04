@@ -2,6 +2,7 @@ package structures;
 
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("ALL")
 public class MyLinkedListTest {
 
     @Test
@@ -113,6 +114,19 @@ public class MyLinkedListTest {
             assert false;
         } catch (IndexOutOfBoundsException ignored) {
         }
+    }
+
+    @Test
+    public void containsTest() {
+        MyLinkedList list = new MyLinkedList();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+
+        assert list.contains(1);
+        assert list.contains(2);
+        assert list.contains(3);
+        assert !list.contains(4);
     }
 
 }

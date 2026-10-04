@@ -1,10 +1,18 @@
 package structures;
 
+import metrics.Metrics;
+
 public class MinHeap {
     private int[] data;
     private int size;
+    private final Metrics metrics;
 
     public MinHeap() {
+        this(new Metrics());
+    }
+
+    public MinHeap(Metrics metrics) {
+        this.metrics = metrics;
         data = new int[2];
         size = 0;
     }
@@ -14,11 +22,13 @@ public class MinHeap {
 
         int index = size;
         data[index] = value;
+        metrics.moves++;
         size++;
 
         while (index > 0) {
             int parent = (index - 1) / 2;
 
+            metrics.comparisons++;
             if (data[parent] <= data[index]) {
                 break;
             }
@@ -33,6 +43,8 @@ public class MinHeap {
             int[] bigger = new int[data.length * 2];
 
             for (int i = 0; i < data.length; i++) {
+                metrics.steps++;
+                metrics.moves++;
                 bigger[i] = data[i];
             }
 
@@ -44,6 +56,7 @@ public class MinHeap {
         int temporary = data[first];
         data[first] = data[second];
         data[second] = temporary;
+        metrics.moves += 3;
     }
 
     public int peekMin() {
@@ -51,6 +64,7 @@ public class MinHeap {
             throw new IllegalStateException("Heap is empty");
         }
 
+        metrics.steps++;
         return data[0];
     }
 
@@ -61,6 +75,8 @@ public class MinHeap {
 
         int minimum = data[0];
         data[0] = data[size - 1];
+        metrics.steps++;
+        metrics.moves++;
         size--;
 
         int index = 0;
@@ -69,16 +85,21 @@ public class MinHeap {
             int left = 2 * index + 1;
             int right = 2 * index + 2;
 
+            metrics.steps++;
             if (left >= size) {
                 break;
             }
 
             int smallerChild = left;
 
+            if (right < size) {
+                metrics.comparisons++;
+            }
             if (right < size && data[right] < data[left]) {
                 smallerChild = right;
             }
 
+            metrics.comparisons++;
             if (data[index] <= data[smallerChild]) {
                 break;
             }
