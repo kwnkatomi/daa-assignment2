@@ -42,27 +42,27 @@ Each benchmark does one warm-up and five timed runs; the median time is reported
 
 ### W1: Random Access
 
-![W1 time](IMG_0682.jpg)
+![W1 time](IMG_0682.jpeg)
 
-![W1 operation counts](IMG_0683.jpg)
+![W1 operation counts](IMG_0683.jpeg)
 
 ### W2: Search
 
-![W2 time](IMG_0684.jpg)
+![W2 time](IMG_0684.jpeg)
 
-![W2 operation counts](IMG_0685.jpg)
+![W2 operation counts](IMG_0685.jpeg)
 
 ### W3: Insert and Remove
 
-![W3 time](IMG_0686.jpg)
+![W3 time](IMG_0686.jpeg)
 
-![W3 operation counts](IMG_0687.jpg)
+![W3 operation counts](IMG_0687.jpeg)
 
 ### W4: Priority Processing
 
-![W4 time](IMG_0688.jpg)
+![W4 time](IMG_0688.jpeg)
 
-![W4 operation counts](rIMG_0689.jpg)
+![W4 operation counts](rIMG_0689.jpeg)
 
 
 
